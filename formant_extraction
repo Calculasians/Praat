@@ -1,81 +1,88 @@
-word$ = "on"
+Read Strings from raw text file: "words.txt"
+numberOfStrings = Get number of strings
+
 sourceDirectory$ = "C:\\Users\\hydsu\\OneDrive\\Desktop\\Praat\\wav_database"
 destDirectory$ = "C:\\Users\\hydsu\\OneDrive\\Desktop\\Praat\\feature_database"
 
-Create Strings as file list... list 'sourceDirectory$'\\'word$'\\*.wav
-numberOfFiles = Get number of strings
-# appendInfoLine: numberOfFiles
-
-for ifile to numberOfFiles
+for stringNumber from 1 to numberOfStrings
+    select Strings words
+    word$ = Get string: stringNumber
     Create Strings as file list... list 'sourceDirectory$'\\'word$'\\*.wav
-    select Strings list
-    fileName$ = Get string... ifile
-    Read from file... 'sourceDirectory$'\\'word$'\\'fileName$'
+    numberOfFiles = Get number of strings
 
-    thisSound$ = selected$("Sound")
+    # for ifile to numberOfFiles
+    for ifile to 100
+        Create Strings as file list... list 'sourceDirectory$'\\'word$'\\*.wav
+        select Strings list
+        fileName$ = Get string... ifile
+        Read from file... 'sourceDirectory$'\\'word$'\\'fileName$'
 
-    nowarn To TextGrid (voice activity)... "0.0 (= auto)" "0.3" "0.1" "70.0" "6000.0" "-10.0" "-35.0" "0.1" "0.1" "silent" "sounding"
-    thisTextGrid$ = selected$("TextGrid")
+        thisSound$ = selected$("Sound")
 
-    select TextGrid 'thisTextGrid$'
-    numberOfPhonemes = Get number of intervals: 1
+        nowarn To TextGrid (voice activity)... "0.0 (= auto)" "0.3" "0.1" "70.0" "6000.0" "-10.0" "-35.0" "0.1" "0.1" "silent" "sounding"
+        thisTextGrid$ = selected$("TextGrid")
 
-    # Create Formant Object
-    select Sound 'thisSound$'
-    # Save as short text
-    Save as short text file: "C:\\Users\\hydsu\\OneDrive\\Desktop\\Praat\\short_text_database\\" + "'word$'" + "\\" + "'thisSound$'" + ".csv"
-    # {time step, max formants, max Hz, window length, dynamic range (dB)} Play around with these values
-    To Formant (burg)... 0 5 5500 0.025 30 
-    thisFormant$ = selected$("Formant")
-
-
-    outputPath$ = "C:\\Users\\hydsu\\OneDrive\\Desktop\\Praat\\feature_database\\" + "'word$'" + "\\" + "'thisSound$'" + ".csv"
-    writeFileLine: "'outputPath$'", "audio name, time, phoneme, F1, F2, F3, F4, F5"
-
-    # For Voice Activity Textgrid, we only want the "sounding" portion, but this will get all intervals
-    for thisInterval from 1 to numberOfPhonemes
-
-        # Get the label of the interval
         select TextGrid 'thisTextGrid$'
-        thisPhoneme$ = Get label of interval: 1, thisInterval
-        #appendInfoLine: thisPhoneme$
-        
-        # Find the midpoint.
-        thisPhonemeStartTime = Get start point: 1, thisInterval
-        thisPhonemeEndTime   = Get end point:   1, thisInterval
-        duration = thisPhonemeEndTime - thisPhonemeStartTime
+        numberOfPhonemes = Get number of intervals: 1
 
-        for timePoint from 0 to 100
-            currPoint = thisPhonemeStartTime + (duration * (timePoint / 100))
-        
-            # Extract formant measurements
-            select Formant 'thisSound$'
-            f1 = Get value at time... 1 currPoint Hertz Linear
-            f2 = Get value at time... 2 currPoint Hertz Linear
-            f3 = Get value at time... 3 currPoint Hertz Linear
-            f4 = Get value at time... 4 currPoint Hertz Linear
-            f5 = Get value at time... 5 currPoint Hertz Linear
+        # Create Formant Object
+        select Sound 'thisSound$'
+        # Save as short text
+        Save as short text file: "C:\\Users\\hydsu\\OneDrive\\Desktop\\Praat\\short_text_database\\" + "'word$'" + "\\" + "'thisSound$'" + ".csv"
+        # {time step, max formants, max Hz, window length, dynamic range (dB)} Play around with these values
+        To Formant (burg)... 0 5 5500 0.025 30 
+        thisFormant$ = selected$("Formant")
 
-            # Get the word interval and then the label
+
+        outputPath$ = "C:\\Users\\hydsu\\OneDrive\\Desktop\\Praat\\feature_database\\" + "'word$'" + "\\" + "'thisSound$'" + ".csv"
+        writeFileLine: "'outputPath$'", "audio name, time, phoneme, F1, F2, F3, F4, F5"
+
+        # For Voice Activity Textgrid, we only want the "sounding" portion, but this will get all intervals
+        for thisInterval from 1 to numberOfPhonemes
+
+            # Get the label of the interval
             select TextGrid 'thisTextGrid$'
-            # thisWordInterval = Get interval at time: 2, currPoint
-            # thisWord$ = Get label of interval: 2, thisWordInterval
+            thisPhoneme$ = Get label of interval: 1, thisInterval
+            #appendInfoLine: thisPhoneme$
+            
+            # Find the midpoint.
+            thisPhonemeStartTime = Get start point: 1, thisInterval
+            thisPhonemeEndTime   = Get end point:   1, thisInterval
+            duration = thisPhonemeEndTime - thisPhonemeStartTime
 
-            # Save to a spreadsheet
-            appendFileLine: "'outputPath$'", 
-                    ...thisSound$, ",",
-                    ...currPoint, ",",
-                    ...thisPhoneme$, ",",
-                    ...f1, ",", 
-                    ...f2, ",", 
-                    ...f3, ",",
-                    ...f4, ",",
-                    ...f5
+            for timePoint from 0 to 100
+                currPoint = thisPhonemeStartTime + (duration * (timePoint / 100))
+            
+                # Extract formant measurements
+                select Formant 'thisSound$'
+                f1 = Get value at time... 1 currPoint Hertz Linear
+                f2 = Get value at time... 2 currPoint Hertz Linear
+                f3 = Get value at time... 3 currPoint Hertz Linear
+                f4 = Get value at time... 4 currPoint Hertz Linear
+                f5 = Get value at time... 5 currPoint Hertz Linear
 
+                # Get the word interval and then the label
+                select TextGrid 'thisTextGrid$'
+                # thisWordInterval = Get interval at time: 2, currPoint
+                # thisWord$ = Get label of interval: 2, thisWordInterval
+
+                # Save to a spreadsheet
+                appendFileLine: "'outputPath$'", 
+                        ...thisSound$, ",",
+                        ...currPoint, ",",
+                        ...thisPhoneme$, ",",
+                        ...f1, ",", 
+                        ...f2, ",", 
+                        ...f3, ",",
+                        ...f4, ",",
+                        ...f5
+
+            endfor
         endfor
-    endfor
 
-    select all 
-    minus Strings list
-    Remove
+        select all 
+        minus Strings list
+	minus Strings words
+        Remove
+    endfor
 endfor

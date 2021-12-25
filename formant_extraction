@@ -28,9 +28,13 @@ for stringNumber from 1 to numberOfStrings
         # Create Formant Object
         select Sound 'thisSound$'
         # Save as short text
+        # {window length (s), maximum frequency (hz), time step (s), frequency step (hz), window shape}
+        To Spectrogram... 0.005 5000 0.001 20 Gaussian
         Save as short text file: "C:\\Users\\hydsu\\OneDrive\\Desktop\\Praat\\short_text_database\\" + "'word$'" + "\\" + "'thisSound$'" + ".csv"
+
         # {time step, max formants, max Hz, window length, dynamic range (dB)} Play around with these values
-        To Formant (burg)... 0 5 5500 0.025 30 
+        select Sound 'thisSound$'
+	    To Formant (burg)... 0 5 5500 0.025 30 
         thisFormant$ = selected$("Formant")
 
 
@@ -82,7 +86,7 @@ for stringNumber from 1 to numberOfStrings
 
         select all 
         minus Strings list
-	minus Strings words
+	    minus Strings words
         Remove
     endfor
 endfor

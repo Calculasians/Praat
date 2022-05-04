@@ -4,7 +4,7 @@ module keyword_spotting_exploration #(
     parameter NUM_FOLDS = `NUM_FOLDS,
     parameter AM_NUM_FOLDS = `AM_NUM_FOLDS
 ) (
-    input                                   clk,
+    input                                   CLK_125MHZ_FPGA,
     input                                   rst,
 
     input                                   fin_valid,
@@ -86,11 +86,7 @@ module keyword_spotting_exploration #(
         .hvout              (se_hvout)
     );
 
-    temporal_encoder #(
-		.NUM_FOLDS          (NUM_FOLDS),
-		.NUM_FOLDS_WIDTH    (NUM_FOLDS_WIDTH),
-		.FOLD_WIDTH         (FOLD_WIDTH)
-    ) te (
+    temporal_encoder te (
         .clk                (clk),
         .rst                (rst),
 

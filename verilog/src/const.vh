@@ -1,11 +1,11 @@
 `ifndef CONST
 `define CONST
 
-`define HV_DIMENSION 10000
+`define HV_DIMENSION 2000
 `define DISTANCE_WIDTH 14
 
-`define NUM_FOLDS 10
-`define AM_NUM_FOLDS 4
+`define NUM_FOLDS 4
+`define AM_NUM_FOLDS 2
 
 `define STOP_FEATURE_WIDTH 4
 `define S_FEATURE_WIDTH 4

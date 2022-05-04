@@ -36,7 +36,7 @@ module cim_memory_wrapper (
 
     cim_rom crm (
         .addr   (addr),
-        .dout   (Q)
+        .dout_rom   (Q)
     );
 
 endmodule : cim_memory_wrapper

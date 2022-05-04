@@ -35,7 +35,7 @@ module keyspot_tb;
         .NUM_FOLDS      (num_folds),
         .AM_NUM_FOLDS   (am_num_folds)
     ) kse (
-        .clk            (clk),
+        .CLK_125MHZ_FPGA            (clk),
         .rst            (rst),
 
         .fin_valid      (fin_valid),

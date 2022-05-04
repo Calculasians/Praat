@@ -39,6 +39,8 @@ module hv_generator #(
     reg  [`AMP_FEATURE_WIDTH-1:0]           amp_memory;
     reg  [`FORMANT_FEATURE_WIDTH-1:0]       f1_memory;
     reg  [`FORMANT_FEATURE_WIDTH-1:0]       f2_memory;
+    
+    wire                                    fin_fire;
 
     reg                                     im_state;
     localparam IM_IDLE              = 1'b0;
@@ -50,16 +52,17 @@ module hv_generator #(
 
     assign fin_fire     = fin_valid && fin_ready;
 
-    assign curr_feature = (channel_counter == 0 && fold_counter == 0) ? {7{1'b0}, stop_feature} :
-                          (channel_counter == 0 && fold_counter != 0) ? {7{1'b0}, stop_memory} :
-                          (channel_counter == 1) ? {7{1'b0}, s_memory} :
-                          (channel_counter == 2) ? {6{1'b0}, f_memory} :
-                          (channel_counter == 3) ? {6{1'b0}, amp_memory} :
+    assign curr_feature = (channel_counter == 0 && fold_counter == 0) ? {{7{1'b0}}, stop_feature} :
+                          (channel_counter == 0 && fold_counter != 0) ? {{7{1'b0}}, stop_memory} :
+                          (channel_counter == 1) ? {{7{1'b0}}, s_memory} :
+                          (channel_counter == 2) ? {{6{1'b0}}, f_memory} :
+                          (channel_counter == 3) ? {{6{1'b0}}, amp_memory} :
                           (channel_counter == 4) ? f1_memory :
                           (channel_counter == 5) ? f2_memory : 
                           {`MAX_FEATURE_WIDTH{1'b0}};
 
     cim_memory_wrapper cmw (
+        .clk            (clk),
         .curr_feature   (curr_feature),
         .cim_fidx       (channel_counter),
         .cim            (cim)
@@ -72,7 +75,7 @@ module hv_generator #(
             cim_state       <= CIM_IDLE;
         end
    
-        case (curr_state) 
+        case (cim_state) 
             CIM_IDLE: begin
                 if (fin_fire) begin
                     channel_counter <= channel_counter + 1;
@@ -105,7 +108,7 @@ module hv_generator #(
 
     always @(posedge clk) begin
         if (rst) begin
-            im_state        <= IDLE;
+            im_state        <= IM_IDLE;
         end
 
         case (im_state)
@@ -139,7 +142,7 @@ module hv_generator #(
     end
 
     assign fin_ready    = (cim_state == CIM_IDLE && im_state == IM_IDLE);
-    assign dout_valid   = (im_state != IDLE);
+    assign dout_valid   = (im_state != IM_IDLE);
 
     assign im_out       = im;
     assign cim_out      = cim[(fold_counter_delay * FOLD_WIDTH) +: FOLD_WIDTH];

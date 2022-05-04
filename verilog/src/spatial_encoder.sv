@@ -13,7 +13,7 @@ module spatial_encoder #(
     input  [FOLD_WIDTH-1:0]             im,
     input  [FOLD_WIDTH-1:0]             cim,
 
-    output                              hvout_valid,
+    output reg                          hvout_valid,
     input                               hvout_ready,
     output reg [`HV_DIMENSION-1:0]      hvout
 );
@@ -24,7 +24,7 @@ module spatial_encoder #(
     wire [FOLD_WIDTH-1:0]           binded_im_cim;
     reg  [`NUM_CHANNEL_WIDTH-1:0]   channel_counter;
     reg  [NUM_FOLDS_WIDTH-1:0]      fold_counter;
-    reg  [`NUM_CHANNEL_WIDTH-1:0]   accumulator [FOLD_WIDTH-1];
+    reg  [`NUM_CHANNEL_WIDTH-1:0]   accumulator [FOLD_WIDTH];
     reg  [FOLD_WIDTH-1:0]           accum_fold;
 
     reg                     state;
@@ -71,6 +71,10 @@ module spatial_encoder #(
 
     assign din_ready        = (state == IDLE);
     assign accum_fold_valid = (state == PROCESS_FEATURES && channel_counter == `NUM_CHANNEL-1);
+    assign last_accum_fold_valid = (state == PROCESS_FEATURES && channel_counter == `NUM_CHANNEL-1 && fold_counter == NUM_FOLDS-1);
+    always @(posedge clk) begin
+        hvout_valid <= last_accum_fold_valid;
+    end
 
     integer j;
     always @(*) begin

@@ -6,6 +6,6 @@ Pretty much everything is in the `KeywordSpotting_PraatEndeavour.ipynb` and `Spe
 
 `Spectrogram Level Activities.ipynb` uses spectrogram data ideally placed in `custom_spectrograms/{word}` where `{word}` can be any keyword such as `on`, `off`, etc. You can generate these in `Spectrogram Level Activities.ipynb` under the section: `This cell generates custom_spectrograms from audio wav files`.
 
-Everything in the `verilog` file is outdated (doesn't use the latest feature extraction in `Spectrogram Level Activities.ipynb`.
+Everything in the `verilog` file is outdated (doesn't use the latest feature extraction in `Spectrogram Level Activities.ipynb`.)
 
 Future work can entail starting with a neural network, and gradually peeling away the NN, replacing it with HDC components without degrading the accuracy.
